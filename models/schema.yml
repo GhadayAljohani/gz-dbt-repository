@@ -1,0 +1,59 @@
+version: 2
+
+sources:
+  - name: raw
+    schema: gz_raw_data
+    description: greenweez raw data source
+    tables:
+      - name: sales
+        freshness:
+          warn_after: {count: 90 , period: day}
+        loaded_at_field: "CAST(date_date AS TIMESTAMP)"
+  
+        identifier: raw_gz_sales
+        description: sales of greenweez / we have one row per products_id found in each orders_id.
+        columns:
+          - name: date_date
+            description: the date of purchase 
+          - name: orders_id
+            description: The ID of the order
+          - name: pdt_id
+            description: The ID of the product
+          - name: revenue
+            description: The revenue generated from the sale
+          - name: quantity
+            description: The quantity of products purchased
+          - name: primary key
+        tests:
+          - unique:
+             column_name: "( orders_id || '-' || pdt_id)"
+       
+    
+      - name: product
+        identifier: raw_gz_product
+        description: products of greenweez / we have one row per products_id and purchse_price.
+        columns:
+          - name: products_id
+            description: The id for the product
+            tests:
+             - unique
+             - not_null
+                 
+          - name: purchse_price
+            description: The purchse price of each product
+          
+      - name: ship
+        identifier: raw_gz_ship
+        description: The contains information related to shipping costs for orders. Each row corresponds to a specific order and includes details such as the order ID , shipping fee, logistics cost, and shipping cost.
+        columns:
+        - name: orders_id
+          description: The unique identifier for each order.
+          tests:
+             - unique
+             - not_null
+        - name: shipping_fee
+          description: The fee charged for shipping.
+        - name: logcost
+          description: The logistic cost associated with shipping.
+        - name: ship_cost
+          description: The total shipping cost, which may include additional charges beyond the shipping fee.
