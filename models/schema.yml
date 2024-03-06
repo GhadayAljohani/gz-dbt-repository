@@ -57,4 +57,3 @@ sources:
           description: The logistic cost associated with shipping.
         - name: ship_cost
           description: The total shipping cost, which may include additional charges beyond the shipping fee.
-     
